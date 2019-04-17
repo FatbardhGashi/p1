@@ -4,6 +4,7 @@ import math
 import random 
 import os 
 import sys 
+import datetime
 
 host = 'localhost'
 port = 12000
@@ -65,7 +66,7 @@ def FIBONACCI(Numri):
         b = f;
         return f
 
-def KONVERTIMI(Opcioni, Numri):
+def KONVERTIMI(opcioni, Numri):
     if opcioni == "KilowattToHorsepower":
         Rezultati = Numri*1.34102
     elif opcioni == "HorsepowerToKilowatt":
@@ -76,8 +77,34 @@ def KONVERTIMI(Opcioni, Numri):
         Rezultati = Numri/(0.0174533)
     elif opcioni =="GallonsToLiters":
         Rezultati = Numri*3.78541
-    elif opcioni =="LitersToLiters":
+    elif opcioni =="LitersToGallons":
         Rezultati = Numri/(3.78541)
+    else:
+        Rezultati= "Gabim! Zgjedhni një nga opcionet e mësipërme!\nSigurohuni që ta shkruani drejtë!"
+    return Rezultati
+
+# ```Metodat shtesë
+def TEOREMAKOSINUS(a, b, C):
+    c = math.sqrt(math.pow(a,2) + math.pow(b,2) - 2*a*b*math.cos(C))
+    return c
+
+def GJEJDITEN(numri):
+    now = datetime.datetime.now()
+
+    if((now.weekday() + numri) % 7 == 0):
+        return "Monday"
+    if((now.weekday() + numri) % 7 == 1):
+        return "Tuesday"
+    if((now.weekday() + numri) % 7 == 2):
+        return "Wednesday"
+    if((now.weekday() + numri) % 7 == 3):
+        return "Thursday"
+    if((now.weekday() + numri) % 7 == 4):
+        return "Friday"
+    if((now.weekday() + numri) % 7 == 5):
+        return "Saturday"
+    if((now.weekday() + numri) % 7 == 6):
+        return "Sunday"
 
 def ThreadFunction(connection):
     while True:
@@ -121,7 +148,14 @@ def ThreadFunction(connection):
             except socket.error:
                 break
             informata = str(KONVERTIMI(vargu[1], numri))
-
+        elif(vargu[0]=="TEOREMAKOSINUS"):
+            a = int(vargu[1])
+            b = int(vargu[2])
+            C = int(vargu[3])
+            informata = "Teorema e kosinusit : c=" + str(TEOREMAKOSINUS(a,b,C))
+        elif(vargu[0]=="GJEJDITEN"):
+            rreshti = int(vargu[1])
+            informata = str(GJEJDITEN(rreshti))
         else:
             informata = "Serveri nuk mund t'i pergjigjet kesaj kerkese!"
         connection.send(informata.encode())
