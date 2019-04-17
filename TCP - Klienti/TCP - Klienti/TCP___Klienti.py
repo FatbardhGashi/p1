@@ -3,7 +3,7 @@ import sys
 import io
 
 host='localhost'
-port=11000
+port=12000
 
 socketClient = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 socketClient.connect((host,port))
@@ -30,6 +30,7 @@ print("\t*LitersToGallons\n")
 print("******************************************************************\n")
 
 hyrja=input("Zgjedhni nje komande>>> ")
+
 while((hyrja != "") and (hyrja !="SHKYQU")):
         socketClient.send(hyrja.encode())                
         informata = socketClient.recv(128).decode()

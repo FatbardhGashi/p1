@@ -1,8 +1,12 @@
-import socket
-from _thread import*
+import socket 
+from _thread import *
+import math 
+import random 
+import os 
+import sys 
 
 host = 'localhost'
-port = 11000
+port = 12000
 
 serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 try:
@@ -26,6 +30,7 @@ def BASHTINGELLORE(Teksti):
     bashtingellore = ['B', 'C', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 
                'V', 'X', 'Z', 'b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'q',
               'r', 's', 't', 'v', 'x', 'z']
+    count = 0
     for i in bashtingellore:
         for j in Teksti:
             if i==j:
@@ -77,7 +82,7 @@ def KONVERTIMI(Opcioni, Numri):
 def ThreadFunction(connection):
     while True:
         try:
-            informata = cconnection.recv(128).decode()
+            informata = connection.recv(128).decode()
         except socket.error:
             print("Të dhënat nuk janë dërguar në server!")
             break
@@ -95,7 +100,7 @@ def ThreadFunction(connection):
         elif(vargu[0]=="NUMRIIPORTIT"):
             informata = "Klienti është duke përdorur portin " + str(address[1])
         elif(vargu[0]=="BASHTINGELLORE"):
-            informata = "Teksti i pranuar përmban " + str(BASHTINGELLORE(rreshti) + " bashtingëllore.")
+            informata = "Teksti i pranuar ka : " + str(BASHTINGELLORE(rreshti)) + " bashtingëllore!"    #  ``` Teksti i pranuar ka x bashtingëllore ```
         elif(vargu[0]=="PRINTIMI"):
             informata = "Teksti që keni shtypur është : " + str(PRINTIMI(rreshti))
         elif(vargu[0]=="KOHA"):
@@ -119,12 +124,12 @@ def ThreadFunction(connection):
 
         else:
             informata = "Serveri nuk mund t'i pergjigjet kesaj kerkese!"
-        connection.send(data.encode())
+        connection.send(informata.encode())
     connection.close()
 
 i = 1
 while(i==1):
     connection, address = serverSocket.accept()
     print("Serveri është lidhur me klientin me IP Adresë %s, në portin %s" % address)
-    print("Serveri është lidhur me klientin me IP Adresë %s, në portin %s" % address)
+    start_new_thread(ThreadFunction,(connection,))
 serverSocket.close()
