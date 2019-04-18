@@ -20,7 +20,7 @@ serverSocket.listen(5)
 
 print("******************************************************************\n")
 print("Projekti i parë nga lënda Rrjeta Kompjuterike")
-print("\tFIEK TCP Protokolli - KLIENTI")
+print("\tFIEK TCP Protokolli - SERVERI")
 print("\t\tFatbardh Gashi\n")
 print("******************************************************************\n")
 
@@ -58,13 +58,13 @@ def LOJA():
     return NumratRandom
 
 def FIBONACCI(Numri):
-    a = 1
+    a = 1 
     b = 1
     for i in range(2,Numri):
         f = a + b;
         a = b
         b = f;
-        return f
+    return f
 
 def KONVERTIMI(opcioni, Numri):
     if opcioni == "KilowattToHorsepower":
@@ -139,7 +139,7 @@ def ThreadFunction(connection):
                 informata = "Emri i kompjuterit nuk mund të gjendet!"
         elif(vargu[0]=="LOJA"):
             informata = "Shtatë numrat e gjeneruar rastësisht prej 1-49 janë : " + LOJA()
-        elif(vargu[0]=="FIBONNACI"):
+        elif(vargu[0]=="FIBONACCI"):
             rreshti = int(vargu[1])
             informata = str(FIBONACCI(rreshti))
         elif(vargu[0]=="KONVERTIMI"):
