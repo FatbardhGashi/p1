@@ -1,25 +1,23 @@
-import socket 
+import socket
+import sys
 from _thread import *
-import math 
-import random  
-import sys 
+import random
 import datetime
+import math 
 
-host = 'localhost'
+host = 'localhost' 
 port = 12000
-
-serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-try:
+serverSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+try :
     serverSocket.bind((host,port))
+    
 except socket.error:
-    print("Problem! Serveri nuk mund të lidhet ne serverin!")
+    print("Nuk u arrit lidhja me klientin")
     sys.exit()
-
-serverSocket.listen(5)
 
 print("******************************************************************\n")
 print("Projekti i parë nga lënda Rrjeta Kompjuterike")
-print("\tFIEK TCP Protokolli - SERVERI")
+print("\tFIEK UDP Protokolli - SERVERI")
 print("\t\tFatbardh Gashi\n")
 print("******************************************************************\n")
 
@@ -40,6 +38,8 @@ def BASHTINGELLORE(Teksti):
 def PRINTIMI(Teksti):
     Teksti = (str(Teksti).strip())
     return Teksti
+
+    return numbers
 
 def EMRIIKOMPJUTERIT():
     return socket.gethostname()
@@ -105,64 +105,65 @@ def GJEJDITEN(numri):
     if((now.weekday() + numri) % 7 == 6):
         return "Sunday"
 
-def ThreadFunction(connection):
-    while True:
-        try:
-            informata = connection.recv(128).decode()
-        except socket.error:
-            print("Të dhënat nuk janë dërguar në server!")
-            break
-        vargu = str(informata).rsplit(" ")
-        rreshti = ""
-        gjatesia_vargu = len(vargu)
-        for fjala in range(1, gjatesia_vargu):
-            rreshti += vargu[fjala]
-            if(fjala != gjatesia_vargu):
-                rreshti += " "
-        if not informata:
-            break
-        elif(vargu[0]=="IPADRESA"):
+def ClientThread(input, address):
+    try:
+        informata = input.decode() 
+    except socket.error:
+        print("Ka ndodhur nje problem!")   
+
+
+    vargu = str(informata).rsplit(" ")
+    rreshti = ""
+    gjatesia_vargu = len(vargu)
+    for fjala in range(1, gjatesia_vargu):
+        rreshti += vargu[fjala]
+        if(fjala != gjatesia_vargu):
+            rreshti += " "
+    if not informata:
+        return
+    elif(vargu[0]=="IPADRESA"):
             informata = "IP Adresa e klientit është : " + IPADRESA()
-        elif(vargu[0]=="NUMRIIPORTIT"):
+    elif(vargu[0]=="NUMRIIPORTIT"):
             informata = "Klienti është duke përdorur portin " + str(address[1])
-        elif(vargu[0]=="BASHTINGELLORE"):
+    elif(vargu[0]=="BASHTINGELLORE"):
             informata = "Teksti i pranuar ka : " + str(BASHTINGELLORE(rreshti)) + " bashtingëllore!"    #  ``` Teksti i pranuar ka x bashtingëllore ```
-        elif(vargu[0]=="PRINTIMI"):
+    elif(vargu[0]=="PRINTIMI"):
             informata = "Teksti që keni shtypur është : " + str(PRINTIMI(rreshti))
-        elif(vargu[0]=="KOHA"):
+    elif(vargu[0]=="KOHA"):
             informata = KOHA()
-        elif(vargu[0]=="EMRIIKOMPJUTERIT"):
-            try:
-                informata = "Emri i kompjuterit është : " + EMRIIKOMPJUTERIT()
-            except socket.error:
-                informata = "Emri i kompjuterit nuk mund të gjendet!"
-        elif(vargu[0]=="LOJA"):
+    elif(vargu[0]=="EMRIIKOMPJUTERIT"):
+        try:
+            informata = "Emri i kompjuterit është : " + EMRIIKOMPJUTERIT()
+        except socket.error:
+            informata = "Emri i kompjuterit nuk mund të gjendet!"
+    elif(vargu[0]=="LOJA"):
             informata = "Shtatë numrat e gjeneruar rastësisht prej 1-49 janë : " + LOJA()
-        elif(vargu[0]=="FIBONACCI"):
+    elif(vargu[0]=="FIBONACCI"):
             rreshti = int(vargu[1])
             informata = str(FIBONACCI(rreshti))
-        elif(vargu[0]=="KONVERTIMI"):
+    elif(vargu[0]=="KONVERTIMI"):
             try:
                 numri = float(vargu[2])
             except socket.error:
-                break
+                return "Gabim!!!"
             informata = str(KONVERTIMI(vargu[1], numri))
-        elif(vargu[0]=="TEOREMAKOSINUS"):
+    elif(vargu[0]=="TEOREMAKOSINUS"):
             a = int(vargu[1])
             b = int(vargu[2])
             C = int(vargu[3])
             informata = "Teorema e kosinusit : c=" + str(TEOREMAKOSINUS(a,b,C))
-        elif(vargu[0]=="GJEJDITEN"):
+    elif(vargu[0]=="GJEJDITEN"):
             rreshti = int(vargu[1])
             informata = str(GJEJDITEN(rreshti))
-        else:
-            informata = "Serveri nuk mund t'i pergjigjet kesaj kerkese!"
-        connection.send(informata.encode())
-    connection.close()
+    else:
+        informata="Serveri nuk mund ti pergjigjet kesaj kerkese"
+    serverSocket.sendto(informata.encode(),address)
 
-i = 1
-while(i==1):
-    connection, address = serverSocket.accept()
-    print("Serveri është lidhur me klientin me IP Adresë %s, në portin %s" % address)
-    start_new_thread(ThreadFunction,(connection,))
+
+while 1:
+
+        informata, address=serverSocket.recvfrom(128)
+        print('Serveri eshte lidhur me klientin me Ip Adrese ' + address[0] + ' ,ne portin ' + str(address[1]))
+        start_new_thread(ClientThread,(informata, address,))
+
 serverSocket.close()
