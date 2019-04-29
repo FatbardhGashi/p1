@@ -163,7 +163,7 @@ def ClientThread(input, address):
 while 1:
 
         informata, address=serverSocket.recvfrom(128)
-        print('Serveri eshte lidhur me klientin me Ip Adrese ' + address[0] + ' ,ne portin ' + str(address[1]))
+        print('Serveri është lidhur me klientin me Ip Adresë ' + address[0] + ', në portin : ' + str(address[1]))
         start_new_thread(ClientThread,(informata, address,))
 
 serverSocket.close()

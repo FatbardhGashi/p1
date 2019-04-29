@@ -37,7 +37,7 @@ while((hyrja != "") and (hyrja !="SHKYQU")):
 
     socketClient.sendto(hyrja.encode(),(host,port))
     informata=socketClient.recv(128)
-    print(informata)
+    print(informata.decode())
     hyrja=input("Jepni kerkesen tuaj : ")
 
 socketClient.close()
